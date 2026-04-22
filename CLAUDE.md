@@ -87,6 +87,9 @@ npm run test:e2e      # Playwright
 - Env Vars nur in Vercel Dashboard — **nie in `.env` committen**
 - `.env.local` ist in `.gitignore`
 
+## Wichtig für neue Agents
+Lies **`DECISIONS.md`** bevor du Änderungen machst. Die Datei dokumentiert alle nicht-offensichtlichen Architekturentscheidungen, verworfene Ansätze, und kritische Gotchas (z.B. Next.js 16 vs. 15, Tailwind v4 CSS-Config, Custom ThemeProvider statt next-themes, Font-Cascade-Problem, h-dvh statt 100vh).
+
 ## Phasen-Status
 - [x] Phase 1: Foundation (Next.js, UI-System, Dummy-Chat)
 - [ ] Phase 2: AI API Integration (Vercel AI SDK, Claude + OpenAI)
