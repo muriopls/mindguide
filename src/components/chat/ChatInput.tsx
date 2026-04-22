@@ -31,25 +31,27 @@ export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="flex gap-2 items-end p-4 border-t border-border bg-background">
-      <textarea
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={t('placeholder')}
-        disabled={isLoading || disabled}
-        rows={1}
-        className="flex-1 resize-none rounded-xl border border-input bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-mg-primary disabled:opacity-50 min-h-[48px] max-h-[160px]"
-        style={{ overflowY: 'auto' }}
-      />
-      <Button
-        onClick={handleSend}
-        disabled={!value.trim() || isLoading || disabled}
-        className="bg-mg-primary hover:bg-mg-primary/90 text-mg-primary-foreground h-12 w-12 p-0 rounded-xl shrink-0"
-        aria-label={t('send')}
-      >
-        {isLoading ? <LoadingSpinner size="sm" className="text-white" /> : <Send className="w-4 h-4" />}
-      </Button>
+    <div className="px-4 pb-5 pt-2">
+      <div className="flex gap-2 items-end px-3 py-3 rounded-2xl border border-border/60 bg-background/80 backdrop-blur-md shadow-lg">
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t('placeholder')}
+          disabled={isLoading || disabled}
+          rows={1}
+          className="flex-1 resize-none bg-transparent px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none disabled:opacity-50 min-h-[36px] max-h-[160px]"
+          style={{ overflowY: 'auto' }}
+        />
+        <Button
+          onClick={handleSend}
+          disabled={!value.trim() || isLoading || disabled}
+          className="bg-mg-primary hover:bg-mg-primary/90 text-mg-primary-foreground h-10 w-10 p-0 rounded-xl shrink-0"
+          aria-label={t('send')}
+        >
+          {isLoading ? <LoadingSpinner size="sm" className="text-white" /> : <Send className="w-4 h-4" />}
+        </Button>
+      </div>
     </div>
   );
 }

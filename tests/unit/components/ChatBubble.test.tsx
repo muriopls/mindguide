@@ -26,8 +26,9 @@ describe('ChatBubble', () => {
     expect(screen.getByText('Du')).toBeInTheDocument();
   });
 
-  it('shows brain emoji for assistant messages', () => {
+  it('shows sparkles icon for assistant messages', () => {
     render(<ChatBubble message={makeMessage('assistant', 'Test')} />);
-    expect(screen.getByText('🧠')).toBeInTheDocument();
+    expect(screen.queryByText('Du')).not.toBeInTheDocument();
+    expect(document.querySelector('svg')).toBeInTheDocument();
   });
 });

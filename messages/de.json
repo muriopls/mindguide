@@ -17,7 +17,7 @@
     "logout": "Abmelden"
   },
   "chat": {
-    "placeholder": "Stelle mir eine Frage zu deinen Hausaufgaben...",
+    "placeholder": "Stell mir eine Frage...",
     "send": "Senden",
     "thinking": "MindGuide denkt nach...",
     "welcomeTitle": "Hallo! Ich bin MindGuide 👋",

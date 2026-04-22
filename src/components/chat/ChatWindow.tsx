@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ChatMessage } from '@/types';
 import { ChatBubble } from './ChatBubble';
@@ -65,17 +66,21 @@ export function ChatWindow() {
   return (
     <div className="flex flex-col h-full">
       <ProgressBar active={isLoading} />
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-2 space-y-4">
         {allMessages.map((msg) => (
           <ChatBubble key={msg.id} message={msg} />
         ))}
         {isLoading && (
-          <div className="flex gap-3 items-center mr-auto">
-            <div className="w-8 h-8 rounded-full bg-mg-secondary text-mg-secondary-foreground flex items-center justify-center text-sm font-bold">
-              🧠
+          <div className="flex gap-2.5 items-center mr-auto">
+            <div className="w-7 h-7 rounded-full bg-mg-primary/10 text-mg-primary border border-mg-primary/20 flex items-center justify-center shrink-0">
+              <Sparkles className="w-3.5 h-3.5" />
             </div>
-            <div className="px-4 py-3 rounded-2xl rounded-tl-sm bg-muted text-muted-foreground text-sm animate-pulse">
-              {t('thinking')}
+            <div className="px-4 py-3 rounded-2xl rounded-tl-sm backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-muted-foreground text-sm shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
+              <span className="inline-flex gap-1">
+                <span className="animate-bounce [animation-delay:0ms]">·</span>
+                <span className="animate-bounce [animation-delay:150ms]">·</span>
+                <span className="animate-bounce [animation-delay:300ms]">·</span>
+              </span>
             </div>
           </div>
         )}

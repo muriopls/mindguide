@@ -1,14 +1,14 @@
 'use client';
 
-import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { useTheme } from '@/components/providers/ThemeProvider';
 
 export function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const t = useTranslations('common');
-  const isDark = theme === 'dark';
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <Button
