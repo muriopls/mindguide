@@ -1,0 +1,33 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "login": "Sign in",
+    "logout": "Sign out"
+  },
+  "chat": {
+    "placeholder": "Ask me a question about your homework...",
+    "send": "Send",
+    "thinking": "MindGuide is thinking...",
+    "welcomeTitle": "Hello! I'm MindGuide 👋",
+    "welcomeMessage": "I'm here to help you solve problems yourself — not by giving away the answer, but by guiding you step by step. What's on your mind today?",
+    "errorSending": "Message could not be sent",
+    "newConversation": "New conversation"
+  },
+  "snackbar": {
+    "messageSent": "Message sent",
+    "settingsSaved": "Settings saved",
+    "error": "Error: {message}"
+  }
+}

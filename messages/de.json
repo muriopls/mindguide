@@ -1,0 +1,33 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "Erneut versuchen",
+    "close": "Schließen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "darkMode": "Dunkelmodus",
+    "lightMode": "Hellmodus"
+  },
+  "nav": {
+    "home": "Start",
+    "dashboard": "Übersicht",
+    "settings": "Einstellungen",
+    "login": "Anmelden",
+    "logout": "Abmelden"
+  },
+  "chat": {
+    "placeholder": "Stelle mir eine Frage zu deinen Hausaufgaben...",
+    "send": "Senden",
+    "thinking": "MindGuide denkt nach...",
+    "welcomeTitle": "Hallo! Ich bin MindGuide 👋",
+    "welcomeMessage": "Ich helfe dir dabei, Aufgaben selbst zu lösen — nicht indem ich die Antwort verrate, sondern indem ich dich Schritt für Schritt begleite. Was beschäftigt dich heute?",
+    "errorSending": "Nachricht konnte nicht gesendet werden",
+    "newConversation": "Neues Gespräch"
+  },
+  "snackbar": {
+    "messageSent": "Nachricht gesendet",
+    "settingsSaved": "Einstellungen gespeichert",
+    "error": "Fehler: {message}"
+  }
+}
