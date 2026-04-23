@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
-import type { AIProvider } from '@/types';
+import type { AIProvider, ChatErrorCode } from '@/types';
 import { ChatBubble } from './ChatBubble';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from '@/components/ui/progress-bar';
@@ -13,6 +13,8 @@ interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  error?: boolean;
+  errorCode?: ChatErrorCode;
 }
 
 export function ChatWindow() {
@@ -29,19 +31,20 @@ export function ChatWindow() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  const handleSend = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, retryAssistantId?: string) => {
     const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content };
-    const assistantId = crypto.randomUUID();
+    const assistantId = retryAssistantId ?? crypto.randomUUID();
 
-    setMessages((prev) => [
-      ...prev,
-      userMsg,
-      { id: assistantId, role: 'assistant', content: '' },
-    ]);
+    setMessages((prev) => {
+      const withoutRetried = retryAssistantId
+        ? prev.filter((m) => m.id !== retryAssistantId)
+        : prev;
+      return [...withoutRetried, userMsg, { id: assistantId, role: 'assistant', content: '' }];
+    });
     setIsLoading(true);
 
     try {
-      const history = [...messages, userMsg]
+      const history = [...messages.filter((m) => !m.error), userMsg]
         .filter((m) => m.content.trim() !== '')
         .map((m) => ({ role: m.role, content: m.content }));
 
@@ -52,8 +55,8 @@ export function ChatWindow() {
       });
 
       if (!res.ok || !res.body) {
-        const body = await res.json().catch(() => ({})) as { error?: string };
-        throw new Error(body.error ?? 'Network error');
+        const body = await res.json().catch(() => ({})) as { code?: ChatErrorCode };
+        throw { code: body.code ?? 'generic' };
       }
 
       const reader = res.body.getReader();
@@ -67,14 +70,24 @@ export function ChatWindow() {
           prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m)),
         );
       }
-    } catch {
+    } catch (err) {
+      const code: ChatErrorCode =
+        err !== null && typeof err === 'object' && 'code' in err
+          ? (err as { code: ChatErrorCode }).code
+          : 'generic';
       setMessages((prev) =>
-        prev.map((m) => (m.id === assistantId ? { ...m, content: t('errorSending') } : m)),
+        prev.map((m) =>
+          m.id === assistantId ? { ...m, content: '', error: true, errorCode: code } : m,
+        ),
       );
     } finally {
       setIsLoading(false);
     }
-  }, [messages, provider, locale, t]);
+  }, [messages, provider, locale]);
+
+  const handleSend = useCallback((content: string) => {
+    sendMessage(content);
+  }, [sendMessage]);
 
   return (
     <div className="flex flex-col h-full">
@@ -91,11 +104,27 @@ export function ChatWindow() {
           </div>
         </div>
 
-        {messages.map((msg) => (
-          <ChatBubble key={msg.id} message={msg} />
-        ))}
+        {messages.map((msg) => {
+          const prevUserMsg = msg.role === 'assistant' && msg.error
+            ? [...messages].reverse().find(
+                (m, i, arr) => arr[i - 1]?.id === msg.id && m.role === 'user',
+              ) ?? messages[messages.indexOf(msg) - 1]
+            : undefined;
 
-        {isLoading && messages.at(-1)?.content === '' && (
+          return (
+            <ChatBubble
+              key={msg.id}
+              message={msg}
+              onRetry={
+                msg.error && prevUserMsg
+                  ? () => sendMessage(prevUserMsg.content, msg.id)
+                  : undefined
+              }
+            />
+          );
+        })}
+
+        {isLoading && messages.at(-1)?.content === '' && !messages.at(-1)?.error && (
           <div className="flex gap-2.5 items-center mr-auto">
             <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden">
               <Image src="/icon.png" alt="" width={28} height={28} />

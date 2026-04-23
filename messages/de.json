@@ -27,7 +27,12 @@
     "providerLabel": "Modell",
     "providerClaude": "Claude",
     "providerOpenAI": "OpenAI",
-    "errorNoKey": "Kein API-Key konfiguriert. Bitte ANTHROPIC_API_KEY oder OPENAI_API_KEY setzen."
+    "errorNoKey": "Kein API-Schlüssel konfiguriert. Bitte wende dich an deinen Lehrer.",
+    "errorAuth": "Der API-Schlüssel ist ungültig. Bitte wende dich an deinen Lehrer.",
+    "errorRateLimit": "Gerade sind zu viele Anfragen unterwegs — warte kurz und versuch es nochmal.",
+    "errorNetwork": "Keine Verbindung zum Server. Bitte überprüfe deine Internetverbindung.",
+    "errorGeneric": "Ups, das hat leider nicht geklappt. Versuch es einfach nochmal!",
+    "retry": "Nochmal versuchen"
   },
   "snackbar": {
     "messageSent": "Nachricht gesendet",
