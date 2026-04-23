@@ -15,15 +15,20 @@ const PROVIDERS: AIProvider[] = ['claude', 'openai'];
 function ModelSelector({ provider, onChange }: { provider: AIProvider; onChange: (p: AIProvider) => void }) {
   const t = useTranslations('chat');
   const [open, setOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const label = provider === 'claude' ? t('providerClaude') : t('providerOpenAI');
   const others = PROVIDERS.filter((p) => p !== provider);
 
+  const handleEnter = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  const handleLeave = () => {
+    closeTimer.current = setTimeout(() => setOpen(false), 120);
+  };
+
   return (
-    <div
-      className="relative inline-flex"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
+    <div className="relative inline-flex" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
       <button
         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
         onClick={() => setOpen((o) => !o)}
@@ -34,7 +39,7 @@ function ModelSelector({ provider, onChange }: { provider: AIProvider; onChange:
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 mb-1.5 py-1 rounded-xl border border-border/60 bg-background/95 backdrop-blur-md shadow-lg min-w-[120px] z-10">
+        <div className="absolute top-full left-0 mt-1 py-1 rounded-xl border border-border/60 bg-background/95 backdrop-blur-md shadow-lg min-w-[120px] z-10">
           {others.map((p) => (
             <button
               key={p}
@@ -133,9 +138,11 @@ export function ChatWindow() {
 
   return (
     <div className="flex flex-col">
-      <ProgressBar active={isLoading} />
+      <div className="rounded-t-2xl overflow-hidden">
+        <ProgressBar active={isLoading} />
+      </div>
 
-      <div ref={scrollContainerRef} className="overflow-y-auto min-h-[240px] px-4 pt-6 pb-2 space-y-4">
+      <div ref={scrollContainerRef} className="overflow-y-auto min-h-[240px] px-4 pt-6 pb-6 space-y-4">
         {/* Welcome message */}
         <div className="flex gap-2.5 max-w-[85%] mr-auto">
           <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
@@ -184,16 +191,9 @@ export function ChatWindow() {
 
       </div>
 
-      <div className="px-4 pb-4 pt-2">
-        <div className="flex items-end gap-2.5">
-          <div className="flex-1 sm:ml-20">
-            <ChatInput onSend={handleSend} isLoading={isLoading} />
-          </div>
-          <div className="hidden sm:flex w-7 h-7 rounded-full bg-foreground/80 text-background text-xs font-semibold shrink-0 mb-3 items-center justify-center">
-            Du
-          </div>
-        </div>
-        <div className="mt-2 sm:ml-20 px-1">
+      <div className="px-4 pb-4 pt-2 space-y-2">
+        <ChatInput onSend={handleSend} isLoading={isLoading} />
+        <div className="px-1">
           <ModelSelector provider={provider} onChange={setProvider} />
         </div>
       </div>
