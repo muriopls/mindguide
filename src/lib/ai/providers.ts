@@ -6,9 +6,9 @@ import type { AIProvider } from '@/types';
 export function getModel(provider: AIProvider, userKey?: string): LanguageModel {
   if (provider === 'openai') {
     const openai = createOpenAI({ apiKey: userKey ?? process.env.OPENAI_API_KEY });
-    return openai('gpt-4o-mini');
+    return openai(process.env.OPENAI_MODEL ?? 'gpt-4o-mini');
   }
 
   const anthropic = createAnthropic({ apiKey: userKey ?? process.env.ANTHROPIC_API_KEY });
-  return anthropic('claude-sonnet-4-6');
+  return anthropic(process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6');
 }
