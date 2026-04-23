@@ -91,10 +91,10 @@ export function ChatWindow() {
   }, [sendMessage]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       <ProgressBar active={isLoading} />
 
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 pt-6 pb-2 space-y-4">
+      <div ref={scrollContainerRef} className="overflow-y-auto min-h-[240px] px-4 pt-6 pb-2 space-y-4">
         {/* Welcome message */}
         <div className="flex gap-2.5 max-w-[85%] mr-auto">
           <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
