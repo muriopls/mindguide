@@ -2,12 +2,53 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import type { AIProvider, ChatErrorCode } from '@/types';
 import { ChatBubble } from './ChatBubble';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from '@/components/ui/progress-bar';
 import { cn } from '@/lib/utils';
+
+const PROVIDERS: AIProvider[] = ['claude', 'openai'];
+
+function ModelSelector({ provider, onChange }: { provider: AIProvider; onChange: (p: AIProvider) => void }) {
+  const t = useTranslations('chat');
+  const [open, setOpen] = useState(false);
+  const label = provider === 'claude' ? t('providerClaude') : t('providerOpenAI');
+  const others = PROVIDERS.filter((p) => p !== provider);
+
+  return (
+    <div
+      className="relative inline-flex"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="text-muted-foreground/60">{t('providerLabel')}:</span>
+        <span className="font-medium text-foreground">{label}</span>
+        <ChevronDown className={cn('w-3 h-3 transition-transform', open && 'rotate-180')} />
+      </button>
+
+      {open && (
+        <div className="absolute bottom-full left-0 mb-1.5 py-1 rounded-xl border border-border/60 bg-background/95 backdrop-blur-md shadow-lg min-w-[120px] z-10">
+          {others.map((p) => (
+            <button
+              key={p}
+              onClick={() => { onChange(p); setOpen(false); }}
+              className="w-full text-left px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors rounded-lg"
+            >
+              {p === 'claude' ? t('providerClaude') : t('providerOpenAI')}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface Message {
   id: string;
@@ -143,25 +184,18 @@ export function ChatWindow() {
 
       </div>
 
-      <div className="px-4 pb-5 pt-2 space-y-2">
-        <div className="flex items-center gap-1.5 px-1">
-          <span className="text-xs text-muted-foreground">{t('providerLabel')}:</span>
-          {(['claude', 'openai'] as AIProvider[]).map((p) => (
-            <button
-              key={p}
-              onClick={() => setProvider(p)}
-              className={cn(
-                'text-xs px-2.5 py-1 rounded-full border transition-colors',
-                provider === p
-                  ? 'bg-mg-primary/20 border-mg-primary/50 text-foreground font-medium'
-                  : 'border-border/50 text-muted-foreground hover:text-foreground hover:border-border',
-              )}
-            >
-              {t(p === 'claude' ? 'providerClaude' : 'providerOpenAI')}
-            </button>
-          ))}
+      <div className="px-4 pb-4 pt-2">
+        <div className="flex items-end gap-2.5">
+          <div className="flex-1 sm:ml-20">
+            <ChatInput onSend={handleSend} isLoading={isLoading} />
+          </div>
+          <div className="hidden sm:flex w-7 h-7 rounded-full bg-foreground/80 text-background text-xs font-semibold shrink-0 mb-3 items-center justify-center">
+            Du
+          </div>
         </div>
-        <ChatInput onSend={handleSend} isLoading={isLoading} />
+        <div className="mt-2 sm:ml-20 px-1">
+          <ModelSelector provider={provider} onChange={setProvider} />
+        </div>
       </div>
     </div>
   );
