@@ -69,6 +69,14 @@
     "errorGeneric": "Oops, something went wrong. Just try again!",
     "retry": "Try again"
   },
+  "footer": {
+    "tagline": "AI tutoring for students — understand, don't just copy.",
+    "legal": "Legal",
+    "impressum": "Imprint",
+    "datenschutz": "Privacy Policy",
+    "copyright": "© 2026 MindGuide",
+    "madeWith": "Made with care for students"
+  },
   "snackbar": {
     "messageSent": "Message sent",
     "settingsSaved": "Settings saved",

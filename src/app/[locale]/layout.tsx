@@ -23,7 +23,7 @@ export default async function LocaleLayout({
       <ThemeProvider>
         <SnackbarProvider>
           <Header />
-          <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
+          <main className="flex flex-col">{children}</main>
         </SnackbarProvider>
       </ThemeProvider>
     </NextIntlClientProvider>

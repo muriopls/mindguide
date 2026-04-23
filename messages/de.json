@@ -69,6 +69,14 @@
     "errorGeneric": "Ups, das hat leider nicht geklappt. Versuch es einfach nochmal!",
     "retry": "Nochmal versuchen"
   },
+  "footer": {
+    "tagline": "KI-Nachhilfe für Schüler:innen — verstehen statt abschreiben.",
+    "legal": "Rechtliches",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz",
+    "copyright": "© 2026 MindGuide",
+    "madeWith": "Mit Herz für Schüler:innen gemacht"
+  },
   "snackbar": {
     "messageSent": "Nachricht gesendet",
     "settingsSaved": "Einstellungen gespeichert",
