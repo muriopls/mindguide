@@ -1,8 +1,23 @@
 import Image from 'next/image';
+import { createClient } from '@/lib/supabase/server';
 import { ThemeSwitcher } from './ThemeSwitcher';
 import { LocaleSwitcher } from './LocaleSwitcher';
+import { UserMenu } from './UserMenu';
 
-export function Header() {
+export async function Header() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let displayName = '';
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single();
+    displayName = profile?.display_name ?? user.email?.split('@')[0] ?? '';
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
@@ -18,6 +33,7 @@ export function Header() {
         <nav className="flex items-center gap-1">
           <LocaleSwitcher />
           <ThemeSwitcher />
+          {user && <UserMenu displayName={displayName} />}
         </nav>
       </div>
     </header>

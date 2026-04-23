@@ -1,6 +1,8 @@
 import { streamText } from 'ai';
 import { getModel } from '@/lib/ai/providers';
 import { systemPrompts } from '@/lib/ai/system-prompts';
+import { createClient } from '@/lib/supabase/server';
+import { decryptApiKey } from '@/lib/crypto/keys';
 import type { AIProvider } from '@/types';
 
 type ErrorCode = 'no_key' | 'auth' | 'rate_limit' | 'network' | 'generic';
@@ -14,17 +16,38 @@ function getErrorCode(err: unknown): ErrorCode {
   return 'generic';
 }
 
+async function getUserKey(provider: AIProvider): Promise<string | undefined> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return undefined;
+
+    const { data } = await supabase
+      .from('user_api_keys')
+      .select('encrypted_key')
+      .eq('user_id', user.id)
+      .eq('provider', provider)
+      .single();
+
+    if (!data) return undefined;
+    return decryptApiKey(data.encrypted_key);
+  } catch {
+    return undefined;
+  }
+}
+
 export async function POST(req: Request) {
-  const { messages, provider, locale, userKey } = await req.json() as {
+  const { messages, provider, locale } = await req.json() as {
     messages: { role: 'user' | 'assistant'; content: string }[];
     provider?: AIProvider;
     locale?: string;
-    userKey?: string;
   };
 
   const resolvedProvider: AIProvider = provider === 'openai' ? 'openai' : 'claude';
   const resolvedLocale = locale === 'en' ? 'en' : 'de';
   const nonEmptyMessages = messages.filter((m) => m.content.trim() !== '');
+
+  const userKey = await getUserKey(resolvedProvider);
 
   try {
     const model = getModel(resolvedProvider, userKey);
