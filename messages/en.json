@@ -23,7 +23,11 @@
     "welcomeTitle": "Hello! I'm MindGuide 👋",
     "welcomeMessage": "I'm here to help you solve problems yourself — not by giving away the answer, but by guiding you step by step. What's on your mind today?",
     "errorSending": "Message could not be sent",
-    "newConversation": "New conversation"
+    "newConversation": "New conversation",
+    "providerLabel": "Model",
+    "providerClaude": "Claude",
+    "providerOpenAI": "OpenAI",
+    "errorNoKey": "No API key configured. Please set ANTHROPIC_API_KEY or OPENAI_API_KEY."
   },
   "snackbar": {
     "messageSent": "Message sent",

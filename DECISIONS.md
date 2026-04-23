@@ -26,6 +26,27 @@ Tailwind v4 uses **CSS-based configuration** — there is no `tailwind.config.ts
 - OKLCH color space is the default (not hex or hsl)
 - `tw-animate-css` replaces `tailwindcss-animate`
 
+### Vercel AI SDK v6 — no `useChat` hook
+`npm install ai` installed **v6.0.x**, which removed the `useChat` hook from `ai/react` (the subpath export no longer exists). The plan assumed v3/v4 patterns.
+
+**What changed in v6:**
+- No `useChat` / `ai/react` — replaced by class-based `AbstractChat`
+- `streamText(...).toDataStreamResponse()` → `toTextStreamResponse()`
+- `LanguageModelV1` type → `LanguageModel`
+
+**Solution:** Streaming is implemented manually in `ChatWindow.tsx` using `fetch` + `ReadableStream` reader. This is actually simpler and framework-agnostic:
+```ts
+const res = await fetch('/api/chat', { method: 'POST', body: ... });
+const reader = res.body.getReader();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  // append chunk to last assistant message
+}
+```
+
+The API route uses `streamText(...).toTextStreamResponse()` which returns a plain UTF-8 text stream (not SSE).
+
 ### shadcn/ui "base-nova" style
 The installed shadcn style is `base-nova`, which uses `@base-ui/react` (not the older Radix UI). This is Tailwind v4 compatible. Do not assume Radix UI APIs.
 

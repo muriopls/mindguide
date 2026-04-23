@@ -93,7 +93,7 @@ npm run test:e2e      # Playwright
 
 ## Phasen-Status
 - [x] Phase 1: Foundation (Next.js, UI-System, Dummy-Chat)
-- [ ] Phase 2: AI API Integration (Vercel AI SDK, Claude + OpenAI)
+- [x] Phase 2: AI API Integration (Vercel AI SDK, Claude + OpenAI)
 - [ ] Phase 3: Prompt Evaluation (Sideproject)
 - [ ] Phase 4: Vercel Deployment
 - [ ] Phase 5: Supabase Auth + User Profiles + API Keys

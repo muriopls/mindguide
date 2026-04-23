@@ -1,9 +1,14 @@
 import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ChatMessage } from '@/types';
+
+interface BubbleMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 interface ChatBubbleProps {
-  message: ChatMessage;
+  message: BubbleMessage;
 }
 
 export function ChatBubble({ message }: ChatBubbleProps) {

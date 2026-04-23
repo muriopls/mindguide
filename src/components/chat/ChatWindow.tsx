@@ -1,76 +1,96 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Sparkles } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import type { ChatMessage } from '@/types';
+import { useTranslations, useLocale } from 'next-intl';
+import type { AIProvider } from '@/types';
 import { ChatBubble } from './ChatBubble';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from '@/components/ui/progress-bar';
+import { cn } from '@/lib/utils';
 
-const DUMMY_RESPONSES = [
-  'Das ist eine gute Frage! Was denkst du, welche Information du zuerst brauchst, um das Problem zu lösen?',
-  'Interessant! Hast du schon versucht, das Problem in kleinere Teile aufzuteilen? Was wäre der erste Schritt?',
-  'Bevor ich dir helfe: Was weißt du schon darüber? Das hilft mir, dir besser zu erklären.',
-  'Lass uns das gemeinsam durchdenken. Wenn du dir ähnliche Aufgaben anschaust, welches Muster erkennst du?',
-  'Gut gemacht, dass du fragst! Stell dir vor, du erklärst das Problem einem Freund — wie würdest du anfangen?',
-];
-
-function getRandomDummyResponse() {
-  return DUMMY_RESPONSES[Math.floor(Math.random() * DUMMY_RESPONSES.length)];
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 export function ChatWindow() {
   const t = useTranslations('chat');
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const locale = useLocale();
+  const [provider, setProvider] = useState<AIProvider>('claude');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const welcomeMessage: ChatMessage = {
-    id: 'welcome',
-    role: 'assistant',
-    content: `${t('welcomeTitle')}\n\n${t('welcomeMessage')}`,
-    timestamp: new Date(),
-  };
-
-  const allMessages = messages.length === 0 ? [welcomeMessage] : messages.length > 0 && messages[0].role === 'user' ? [welcomeMessage, ...messages] : messages;
+  const welcomeContent = `${t('welcomeTitle')}\n\n${t('welcomeMessage')}`;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [allMessages]);
+  }, [messages, isLoading]);
 
-  const handleSend = async (content: string) => {
-    const userMsg: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content,
-      timestamp: new Date(),
-    };
+  const handleSend = useCallback(async (content: string) => {
+    const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content };
+    const assistantId = crypto.randomUUID();
 
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages((prev) => [
+      ...prev,
+      userMsg,
+      { id: assistantId, role: 'assistant', content: '' },
+    ]);
     setIsLoading(true);
 
-    await new Promise((res) => setTimeout(res, 1200 + Math.random() * 800));
+    try {
+      const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
 
-    const assistantMsg: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'assistant',
-      content: getRandomDummyResponse(),
-      timestamp: new Date(),
-    };
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, provider, locale }),
+      });
 
-    setMessages((prev) => [...prev, assistantMsg]);
-    setIsLoading(false);
-  };
+      if (!res.ok || !res.body) throw new Error('Network error');
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        setMessages((prev) =>
+          prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m)),
+        );
+      }
+    } catch {
+      setMessages((prev) =>
+        prev.map((m) => (m.id === assistantId ? { ...m, content: t('errorSending') } : m)),
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [messages, provider, locale, t]);
 
   return (
     <div className="flex flex-col h-full">
       <ProgressBar active={isLoading} />
+
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-2 space-y-4">
-        {allMessages.map((msg) => (
+        {/* Welcome message */}
+        <div className="flex gap-2.5 max-w-[85%] mr-auto">
+          <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-mg-primary/10 text-mg-primary border border-mg-primary/20">
+            <Sparkles className="w-3.5 h-3.5" />
+          </div>
+          <div className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed whitespace-pre-wrap backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-foreground shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
+            {welcomeContent}
+          </div>
+        </div>
+
+        {messages.map((msg) => (
           <ChatBubble key={msg.id} message={msg} />
         ))}
-        {isLoading && (
+
+        {isLoading && messages.at(-1)?.content === '' && (
           <div className="flex gap-2.5 items-center mr-auto">
             <div className="w-7 h-7 rounded-full bg-mg-primary/10 text-mg-primary border border-mg-primary/20 flex items-center justify-center shrink-0">
               <Sparkles className="w-3.5 h-3.5" />
@@ -84,9 +104,30 @@ export function ChatWindow() {
             </div>
           </div>
         )}
+
         <div ref={bottomRef} />
       </div>
-      <ChatInput onSend={handleSend} isLoading={isLoading} />
+
+      <div className="px-4 pb-5 pt-2 space-y-2">
+        <div className="flex items-center gap-1.5 px-1">
+          <span className="text-xs text-muted-foreground">{t('providerLabel')}:</span>
+          {(['claude', 'openai'] as AIProvider[]).map((p) => (
+            <button
+              key={p}
+              onClick={() => setProvider(p)}
+              className={cn(
+                'text-xs px-2.5 py-1 rounded-full border transition-colors',
+                provider === p
+                  ? 'bg-mg-primary/15 border-mg-primary/40 text-mg-primary font-medium'
+                  : 'border-border/50 text-muted-foreground hover:text-foreground hover:border-border',
+              )}
+            >
+              {t(p === 'claude' ? 'providerClaude' : 'providerOpenAI')}
+            </button>
+          ))}
+        </div>
+        <ChatInput onSend={handleSend} isLoading={isLoading} />
+      </div>
     </div>
   );
 }

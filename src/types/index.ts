@@ -14,3 +14,5 @@ export interface ChatMessage {
 }
 
 export type Locale = 'de' | 'en';
+
+export type AIProvider = 'claude' | 'openai';
