@@ -69,6 +69,9 @@
     "errorGeneric": "Oops, something went wrong. Just try again!",
     "retry": "Try again"
   },
+  "hero": {
+    "tagline": "Not the answer — the path to it."
+  },
   "footer": {
     "tagline": "AI tutoring for students — understand, don't just copy.",
     "legal": "Legal",
