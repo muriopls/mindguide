@@ -44,6 +44,10 @@ supabase/migrations/ ← DB Migrations (Phase 5)
 .claude/skills/     ← Agent Skills
 ```
 
+## UI Konventionen
+- **`cursor: pointer`** auf allen klickbaren Elementen — global in `globals.css` via `button:not(:disabled), [role="button"]:not(:disabled), a[href]`. Nie manuell `cursor-pointer` in Komponenten setzen.
+- **Gradient-Farben** für interaktive Header-Elemente: `--logo-color-a` (Lila) und `--logo-color-b` (Pink-Rot), definiert in `globals.css` für Light + Dark Mode.
+
 ## Non-Negotiable Rules
 1. **Kein TypeScript `any`** — immer konkrete Types oder `unknown`
 2. **Alle UI-Strings über next-intl** — nie hardcoded Text in Komponenten
