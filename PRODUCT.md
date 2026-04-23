@@ -30,27 +30,21 @@ MindGuide ist ein KI-gestützter Nachhilfelehrer für Schüler:innen. Die KI hil
 - Snackbar-Feedback bei Aktionen
 - Mobile-first responsive Layout
 
-### Phase 2 — AI Integration (nächste Phase)
+### Phase 2 — AI Integration ✅ (abgeschlossen)
 - Echter KI-gestützter Chat über Vercel AI SDK
 - **Claude** (Anthropic) und **OpenAI** als Anbieter — wählbar im Chat
 - Streaming-Antworten mit sichtbarem Fortschrittsbalken
 - **Hybrid Key-Strategie:**
   - Standard: Operator-Key (vom System bereitgestellt)
-  - Optional: User kann eigenen Key nutzen (Override, Phase 5)
+  - Optional: User kann eigenen Key nutzen (Override, Phase 4)
 - Systempromt erzwingt sokratischen Stil (Deutsch + Englisch)
 
-### Phase 3 — Prompt-Evaluation (Sideproject)
-- Separates Evaluierungs-Skript außerhalb des Repos
-- Testet System-Prompts gegen definierte Szenarien (z.B. "Schüler fragt direkt nach Lösung")
-- Ziel: optimalen Prompt finden, der nie die Antwort verrät und trotzdem natürlich und hilfreich wirkt
-- Ergebnis wird als finaler System-Prompt in die App übernommen
-
-### Phase 4 — Vercel Deployment
+### Phase 3 — Vercel Deployment
 - App ist öffentlich erreichbar
 - Preview-URLs für jeden PR automatisch
 - Keine Konfiguration nötig, um die App zu benutzen
 
-### Phase 5 — Auth & User-Verwaltung
+### Phase 4 — Auth & User-Verwaltung
 - Registrierung und Login (E-Mail/Passwort, optional Google OAuth)
 - Jeder User hat ein Profil (Anzeigename, Sprache, bevorzugter KI-Anbieter)
 - User kann eigenen Claude- oder OpenAI-Key hinterlegen
@@ -59,12 +53,18 @@ MindGuide ist ein KI-gestützter Nachhilfelehrer für Schüler:innen. Die KI hil
 - Geschützte Routen — ohne Login kein Zugriff auf Dashboard/Settings
 - Row Level Security: jeder User sieht nur seine eigenen Daten
 
-### Phase 6 — Lernstruktur & Empfehlungen
+### Phase 5 — Lernstruktur & Empfehlungen
 - User legt Fächer an (Mathe, Deutsch, Englisch, etc.)
 - Jedes Gespräch wird einem Fach zugeordnet
 - Nach jeder Konversation: KI extrahiert eine Zusammenfassung + identifiziert Stärken und Lücken
 - Dashboard zeigt Lernstatus pro Fach
 - KI generiert personalisierte Lernempfehlungen basierend auf erkannten Lücken
+
+### Phase 6 — Prompt-Evaluation (Sideproject)
+- Separates Evaluierungs-Skript außerhalb des Repos
+- Testet System-Prompts gegen definierte Szenarien (z.B. "Schüler fragt direkt nach Lösung")
+- Ziel: optimalen Prompt finden, der nie die Antwort verrät und trotzdem natürlich und hilfreich wirkt
+- Ergebnis wird als finaler System-Prompt in die App übernommen
 
 ---
 
