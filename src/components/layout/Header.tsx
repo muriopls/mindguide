@@ -6,8 +6,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2 font-semibold text-lg text-mg-primary tracking-tight">
-          <Image src="/icon.png" alt="MindGuide" width={28} height={28} className="rounded-lg" />
+        <a href="/" className="flex items-center gap-2 font-semibold text-lg text-foreground tracking-tight">
+          <Image src="/icon.png" alt="" width={28} height={28} className="rounded-lg" />
           MindGuide
         </a>
         <nav className="flex items-center gap-1">

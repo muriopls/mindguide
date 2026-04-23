@@ -47,6 +47,7 @@ export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t('placeholder')}
+          aria-label={t('placeholder')}
           disabled={isLoading || disabled}
           rows={1}
           className="flex-1 resize-none bg-transparent px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none disabled:opacity-50 min-h-[36px] max-h-[160px] overflow-y-auto"

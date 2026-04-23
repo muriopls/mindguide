@@ -84,7 +84,7 @@ export function ChatWindow() {
         {/* Welcome message */}
         <div className="flex gap-2.5 max-w-[85%] mr-auto">
           <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
-            <Image src="/icon.png" alt="MindGuide" width={28} height={28} />
+            <Image src="/icon.png" alt="" width={28} height={28} />
           </div>
           <div className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed whitespace-pre-wrap backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-foreground shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
             {welcomeContent}
@@ -98,14 +98,15 @@ export function ChatWindow() {
         {isLoading && messages.at(-1)?.content === '' && (
           <div className="flex gap-2.5 items-center mr-auto">
             <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden">
-              <Image src="/icon.png" alt="MindGuide" width={28} height={28} />
+              <Image src="/icon.png" alt="" width={28} height={28} />
             </div>
             <div className="px-4 py-3 rounded-2xl rounded-tl-sm backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-muted-foreground text-sm shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
-              <span className="inline-flex gap-1">
+              <span className="inline-flex gap-1" aria-hidden="true">
                 <span className="animate-bounce [animation-delay:0ms]">·</span>
                 <span className="animate-bounce [animation-delay:150ms]">·</span>
                 <span className="animate-bounce [animation-delay:300ms]">·</span>
               </span>
+              <span className="sr-only">{t('thinking')}</span>
             </div>
           </div>
         )}
@@ -123,7 +124,7 @@ export function ChatWindow() {
               className={cn(
                 'text-xs px-2.5 py-1 rounded-full border transition-colors',
                 provider === p
-                  ? 'bg-mg-primary/15 border-mg-primary/40 text-mg-primary font-medium'
+                  ? 'bg-mg-primary/20 border-mg-primary/50 text-foreground font-medium'
                   : 'border-border/50 text-muted-foreground hover:text-foreground hover:border-border',
               )}
             >

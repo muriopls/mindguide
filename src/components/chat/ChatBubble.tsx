@@ -24,7 +24,7 @@ export function ChatBubble({ message }: ChatBubbleProps) {
             : 'overflow-hidden',
         )}
       >
-        {isUser ? 'Du' : <Image src="/icon.png" alt="MindGuide" width={28} height={28} />}
+        {isUser ? 'Du' : <Image src="/icon.png" alt="" width={28} height={28} />}
       </div>
       <div
         className={cn(
