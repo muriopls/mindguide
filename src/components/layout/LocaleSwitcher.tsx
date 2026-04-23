@@ -16,7 +16,13 @@ export function LocaleSwitcher() {
   };
 
   return (
-    <Button variant="ghost" size="sm" onClick={toggleLocale} className="font-medium text-xs">
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={toggleLocale}
+      className="font-medium text-xs"
+      style={{ color: 'var(--logo-color-b)' }}
+    >
       {locale === 'de' ? 'EN' : 'DE'}
     </Button>
   );

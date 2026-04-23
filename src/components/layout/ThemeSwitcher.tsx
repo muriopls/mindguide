@@ -16,8 +16,10 @@ export function ThemeSwitcher() {
       size="icon"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       aria-label={isDark ? t('lightMode') : t('darkMode')}
+      className="[&_svg]:w-5 [&_svg]:h-5"
+      style={{ color: 'var(--logo-color-a)' }}
     >
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      {isDark ? <Sun /> : <Moon />}
     </Button>
   );
 }
