@@ -23,12 +23,13 @@ export function ChatWindow() {
   const [provider, setProvider] = useState<AIProvider>('claude');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const welcomeContent = `${t('welcomeTitle')}\n\n${t('welcomeMessage')}`;
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = scrollContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages, isLoading]);
 
   const sendMessage = useCallback(async (content: string, retryAssistantId?: string) => {
@@ -93,7 +94,7 @@ export function ChatWindow() {
     <div className="flex flex-col h-full">
       <ProgressBar active={isLoading} />
 
-      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-2 space-y-4">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 pt-6 pb-2 space-y-4">
         {/* Welcome message */}
         <div className="flex gap-2.5 max-w-[85%] mr-auto">
           <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
@@ -140,7 +141,6 @@ export function ChatWindow() {
           </div>
         )}
 
-        <div ref={bottomRef} />
       </div>
 
       <div className="px-4 pb-5 pt-2 space-y-2">
