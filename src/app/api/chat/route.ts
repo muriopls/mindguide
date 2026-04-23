@@ -48,6 +48,14 @@ export async function POST(req: Request) {
   const nonEmptyMessages = messages.filter((m) => m.content.trim() !== '');
 
   const userKey = await getUserKey(resolvedProvider);
+  const operatorKey = resolvedProvider === 'openai' ? process.env.OPENAI_API_KEY : process.env.ANTHROPIC_API_KEY;
+
+  if (!userKey && !operatorKey) {
+    return new Response(JSON.stringify({ code: 'no_key' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   try {
     const model = getModel(resolvedProvider, userKey);

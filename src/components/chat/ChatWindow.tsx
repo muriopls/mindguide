@@ -104,7 +104,7 @@ export function ChatWindow() {
           </div>
         </div>
 
-        {messages.map((msg) => {
+        {messages.filter((m) => m.content !== '' || m.error).map((msg) => {
           const prevUserMsg = msg.role === 'assistant' && msg.error
             ? [...messages].reverse().find(
                 (m, i, arr) => arr[i - 1]?.id === msg.id && m.role === 'user',
