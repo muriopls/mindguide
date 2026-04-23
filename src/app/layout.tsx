@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning className={`${inter.variable} h-full`}>
       <body suppressHydrationWarning className="min-h-dvh flex flex-col antialiased overflow-y-auto">
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('mg-theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('mg-theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}if('scrollRestoration' in history)history.scrollRestoration='manual';window.scrollTo(0,0);})();` }} />
         {children}
       </body>
     </html>
