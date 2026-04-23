@@ -71,7 +71,7 @@ export function ChatWindow() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const welcomeContent = `${t('welcomeTitle')}\n\n${t('welcomeMessage')}`;
+  const welcomeContent = t('welcomeMessage');
 
   useEffect(() => {
     const el = scrollContainerRef.current;
