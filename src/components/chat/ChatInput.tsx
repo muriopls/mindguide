@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, useId, type KeyboardEvent } from 'react';
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ interface ChatInputProps {
 export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inputId = useId();
   const t = useTranslations('chat');
 
   useEffect(() => {
@@ -40,14 +41,15 @@ export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
 
   return (
     <div>
+      <label htmlFor={inputId} className="sr-only">{t('placeholder')}</label>
       <div className="flex gap-2 items-end px-3 py-3 rounded-2xl border border-border/60 bg-background/80 backdrop-blur-md shadow-lg">
         <textarea
           ref={textareaRef}
+          id={inputId}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t('placeholder')}
-          aria-label={t('placeholder')}
           disabled={isLoading || disabled}
           rows={1}
           className="flex-1 resize-none bg-transparent px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none disabled:opacity-50 min-h-[36px] max-h-[160px] overflow-y-auto"

@@ -139,11 +139,17 @@
 :root {
   --gradient-a: oklch(0.52 0.27 280 / 0.22);
   --gradient-b: oklch(0.55 0.26 15 / 0.18);
+  /* Logo text colors — dark enough for white backgrounds (≥4.5:1 on white) */
+  --logo-color-a: oklch(0.42 0.25 280);
+  --logo-color-b: oklch(0.45 0.25 15);
 }
 
 .dark {
   --gradient-a: oklch(0.52 0.27 280 / 0.18);
   --gradient-b: oklch(0.55 0.26 15 / 0.14);
+  /* Logo text colors — light enough for dark backgrounds (≥4.5:1 on dark) */
+  --logo-color-a: oklch(0.65 0.22 280);
+  --logo-color-b: oklch(0.65 0.22 15);
 }
 
 @layer base {
