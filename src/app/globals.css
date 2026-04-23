@@ -7,8 +7,10 @@
 /* MindGuide semantic color tokens + font */
 @theme inline {
   --font-sans: var(--font-inter);
-  --color-mg-primary: oklch(0.52 0.14 270);
+  --color-mg-primary: oklch(0.52 0.27 280);
   --color-mg-primary-foreground: oklch(0.98 0 0);
+  --color-mg-accent: oklch(0.55 0.26 15);
+  --color-mg-accent-foreground: oklch(0.98 0 0);
   --color-mg-secondary: oklch(0.75 0.15 75);
   --color-mg-secondary-foreground: oklch(0.15 0 0);
   --color-mg-success: oklch(0.65 0.18 160);
@@ -135,13 +137,13 @@
 }
 
 :root {
-  --gradient-a: oklch(0.6 0.2 250 / 0.28);
-  --gradient-b: oklch(0.75 0.15 75 / 0.22);
+  --gradient-a: oklch(0.52 0.27 280 / 0.22);
+  --gradient-b: oklch(0.55 0.26 15 / 0.18);
 }
 
 .dark {
-  --gradient-a: oklch(0.6 0.2 250 / 0.14);
-  --gradient-b: oklch(0.75 0.15 75 / 0.10);
+  --gradient-a: oklch(0.52 0.27 280 / 0.18);
+  --gradient-b: oklch(0.55 0.26 15 / 0.14);
 }
 
 @layer base {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import type { AIProvider } from '@/types';
 import { ChatBubble } from './ChatBubble';
@@ -83,8 +83,8 @@ export function ChatWindow() {
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-2 space-y-4">
         {/* Welcome message */}
         <div className="flex gap-2.5 max-w-[85%] mr-auto">
-          <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-mg-primary/10 text-mg-primary border border-mg-primary/20">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
+            <Image src="/icon.png" alt="MindGuide" width={28} height={28} />
           </div>
           <div className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed whitespace-pre-wrap backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-foreground shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
             {welcomeContent}
@@ -97,8 +97,8 @@ export function ChatWindow() {
 
         {isLoading && messages.at(-1)?.content === '' && (
           <div className="flex gap-2.5 items-center mr-auto">
-            <div className="w-7 h-7 rounded-full bg-mg-primary/10 text-mg-primary border border-mg-primary/20 flex items-center justify-center shrink-0">
-              <Sparkles className="w-3.5 h-3.5" />
+            <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden">
+              <Image src="/icon.png" alt="MindGuide" width={28} height={28} />
             </div>
             <div className="px-4 py-3 rounded-2xl rounded-tl-sm backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-muted-foreground text-sm shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
               <span className="inline-flex gap-1">

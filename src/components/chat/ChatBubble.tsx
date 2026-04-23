@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface BubbleMessage {
@@ -21,10 +21,10 @@ export function ChatBubble({ message }: ChatBubbleProps) {
           'w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5',
           isUser
             ? 'bg-mg-primary text-mg-primary-foreground text-xs font-semibold'
-            : 'bg-mg-primary/10 text-mg-primary border border-mg-primary/20',
+            : 'overflow-hidden',
         )}
       >
-        {isUser ? 'Du' : <Sparkles className="w-3.5 h-3.5" />}
+        {isUser ? 'Du' : <Image src="/icon.png" alt="MindGuide" width={28} height={28} />}
       </div>
       <div
         className={cn(
