@@ -41,7 +41,9 @@ export function ChatWindow() {
     setIsLoading(true);
 
     try {
-      const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
+      const history = [...messages, userMsg]
+        .filter((m) => m.content.trim() !== '')
+        .map((m) => ({ role: m.role, content: m.content }));
 
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -49,7 +51,10 @@ export function ChatWindow() {
         body: JSON.stringify({ messages: history, provider, locale }),
       });
 
-      if (!res.ok || !res.body) throw new Error('Network error');
+      if (!res.ok || !res.body) {
+        const body = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(body.error ?? 'Network error');
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();

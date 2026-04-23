@@ -14,10 +14,18 @@ export async function POST(req: Request) {
   const resolvedProvider: AIProvider = provider === 'openai' ? 'openai' : 'claude';
   const resolvedLocale = locale === 'en' ? 'en' : 'de';
 
-  const model = getModel(resolvedProvider, userKey);
-  const system = systemPrompts[resolvedLocale];
+  const nonEmptyMessages = messages.filter((m) => m.content.trim() !== '');
 
-  const result = streamText({ model, system, messages });
-
-  return result.toTextStreamResponse();
+  try {
+    const model = getModel(resolvedProvider, userKey);
+    const system = systemPrompts[resolvedLocale];
+    const result = streamText({ model, system, messages: nonEmptyMessages });
+    return result.toTextStreamResponse();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
