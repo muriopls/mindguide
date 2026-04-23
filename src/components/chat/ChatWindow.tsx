@@ -99,7 +99,7 @@ export function ChatWindow() {
           <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
             <Image src="/icon.png" alt="" width={28} height={28} />
           </div>
-          <div className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed whitespace-pre-wrap backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-foreground shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
+          <div className="px-4 py-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed whitespace-pre-wrap backdrop-blur-xl bg-mg-primary/7 dark:bg-mg-primary/12 border border-mg-primary/18 dark:border-mg-primary/22 text-foreground shadow-[0_4px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.5)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.04)]">
             {welcomeContent}
           </div>
         </div>
@@ -129,7 +129,7 @@ export function ChatWindow() {
             <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden">
               <Image src="/icon.png" alt="" width={28} height={28} />
             </div>
-            <div className="px-4 py-3 rounded-2xl rounded-tl-sm backdrop-blur-xl bg-white/45 dark:bg-white/8 border border-white/70 dark:border-white/12 text-muted-foreground text-sm shadow-[0_4px_24px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.07)]">
+            <div className="px-4 py-3 rounded-2xl rounded-tl-sm backdrop-blur-xl bg-mg-primary/7 dark:bg-mg-primary/12 border border-mg-primary/18 dark:border-mg-primary/22 text-muted-foreground text-sm shadow-[0_4px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.5)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25),inset_0_1px_0_rgba(255,255,255,0.04)]">
               <span className="inline-flex gap-1" aria-hidden="true">
                 <span className="animate-bounce [animation-delay:0ms]">·</span>
                 <span className="animate-bounce [animation-delay:150ms]">·</span>
