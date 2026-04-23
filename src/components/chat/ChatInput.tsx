@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,15 @@ interface ChatInputProps {
 
 export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
   const [value, setValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const t = useTranslations('chat');
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [value]);
 
   const handleSend = () => {
     const trimmed = value.trim();
@@ -34,14 +42,14 @@ export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
     <div>
       <div className="flex gap-2 items-end px-3 py-3 rounded-2xl border border-border/60 bg-background/80 backdrop-blur-md shadow-lg">
         <textarea
+          ref={textareaRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t('placeholder')}
           disabled={isLoading || disabled}
           rows={1}
-          className="flex-1 resize-none bg-transparent px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none disabled:opacity-50 min-h-[36px] max-h-[160px]"
-          style={{ overflowY: 'auto' }}
+          className="flex-1 resize-none bg-transparent px-2 py-1.5 text-sm placeholder:text-muted-foreground focus:outline-none disabled:opacity-50 min-h-[36px] max-h-[160px] overflow-y-auto"
         />
         <Button
           onClick={handleSend}
