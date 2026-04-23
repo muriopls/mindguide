@@ -39,7 +39,7 @@ MindGuide ist ein KI-gestützter Nachhilfelehrer für Schüler:innen. Die KI hil
   - Optional: User kann eigenen Key nutzen (Override, Phase 4)
 - Systempromt erzwingt sokratischen Stil (Deutsch + Englisch)
 
-### Phase 3 — Vercel Deployment
+### Phase 3 — Vercel Deployment ✅ (abgeschlossen)
 - App ist öffentlich erreichbar
 - Preview-URLs für jeden PR automatisch
 - Keine Konfiguration nötig, um die App zu benutzen
