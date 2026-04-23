@@ -15,7 +15,11 @@ export async function Header() {
       .select('display_name')
       .eq('id', user.id)
       .single();
-    displayName = profile?.display_name ?? user.email?.split('@')[0] ?? '';
+    displayName =
+      profile?.display_name ??
+      (user.user_metadata?.display_name as string | undefined) ??
+      user.email?.split('@')[0] ??
+      '';
   }
 
   return (
