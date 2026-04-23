@@ -10,5 +10,5 @@ export function getModel(provider: AIProvider, userKey?: string): LanguageModel 
   }
 
   const anthropic = createAnthropic({ apiKey: userKey ?? process.env.ANTHROPIC_API_KEY });
-  return anthropic(process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6');
+  return anthropic(process.env.ANTHROPIC_MODEL ?? 'claude-haiku-4-5-20251001');
 }
