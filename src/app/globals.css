@@ -152,6 +152,27 @@
   --logo-color-b: oklch(0.65 0.22 15);
 }
 
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.45 0 0 / 0.22);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.45 0 0 / 0.38);
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(0.78 0 0 / 0.22);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.78 0 0 / 0.38);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
