@@ -75,11 +75,12 @@ export function ChatWindow({ provider }: ChatWindowProps) {
       }
 
       // Check for sentinel error token or empty response
+      const SENTINEL = '\nMINDGUIDE_ERR:';
       setMessages((prev) => {
         const msg = prev.find((m) => m.id === assistantId);
         if (!msg) return prev;
-        if (msg.content.startsWith('\x00')) {
-          const errorCode = (msg.content.slice(1) as ChatErrorCode) || 'generic';
+        if (msg.content.includes(SENTINEL)) {
+          const errorCode = (msg.content.split(SENTINEL)[1]?.trim() as ChatErrorCode) || 'generic';
           return prev.map((m) =>
             m.id === assistantId ? { ...m, content: '', error: true, errorCode } : m,
           );

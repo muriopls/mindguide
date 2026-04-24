@@ -87,7 +87,7 @@ export async function POST(req: Request) {
         }
       } catch (err) {
         const code = getErrorCode(err);
-        controller.enqueue(encoder.encode(`\x00${code}`));
+        controller.enqueue(encoder.encode(`\nMINDGUIDE_ERR:${code}`));
       }
       controller.close();
     },
