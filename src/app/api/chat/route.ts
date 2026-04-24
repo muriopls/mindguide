@@ -30,10 +30,22 @@ async function getUserKey(provider: AIProvider): Promise<string | undefined> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return undefined;
 
+    // If child account, resolve key from parent (RLS policy allows this SELECT)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('account_type, parent_id')
+      .eq('id', user.id)
+      .single();
+
+    const keyOwnerId =
+      profile?.account_type === 'child' && profile.parent_id
+        ? profile.parent_id
+        : user.id;
+
     const { data } = await supabase
       .from('user_api_keys')
       .select('encrypted_key')
-      .eq('user_id', user.id)
+      .eq('user_id', keyOwnerId)
       .eq('provider', provider)
       .single();
 

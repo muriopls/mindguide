@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useId, type KeyboardEvent } from 'react';
-import { Send } from 'lucide-react';
+import { Send, RotateCcw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
@@ -10,9 +10,11 @@ interface ChatInputProps {
   onSend: (message: string) => void;
   isLoading: boolean;
   disabled?: boolean;
+  onNewConversation?: () => void;
+  hasMessages?: boolean;
 }
 
-export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
+export function ChatInput({ onSend, isLoading, disabled, onNewConversation, hasMessages }: ChatInputProps) {
   const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inputId = useId();
@@ -41,6 +43,18 @@ export function ChatInput({ onSend, isLoading, disabled }: ChatInputProps) {
 
   return (
     <div>
+      {onNewConversation && hasMessages && (
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={onNewConversation}
+            disabled={isLoading}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
+          >
+            <RotateCcw className="w-3 h-3" />
+            {t('newConversation')}
+          </button>
+        </div>
+      )}
       <label htmlFor={inputId} className="sr-only">{t('placeholder')}</label>
       <div className="flex gap-2 items-end px-3 py-3 rounded-2xl border border-border/60 bg-background/80 backdrop-blur-md shadow-lg">
         <textarea
