@@ -84,8 +84,9 @@ export function AuthForm({ mode }: AuthFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'register' && (
             <div>
-              <label className="block text-sm font-medium mb-1.5">{t('displayName')}</label>
+              <label htmlFor="displayName" className="block text-sm font-medium mb-1.5">{t('displayName')}</label>
               <input
+                id="displayName"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
@@ -97,8 +98,9 @@ export function AuthForm({ mode }: AuthFormProps) {
           )}
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">{t('email')}</label>
+            <label htmlFor="email" className="block text-sm font-medium mb-1.5">{t('email')}</label>
             <input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -110,8 +112,9 @@ export function AuthForm({ mode }: AuthFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">{t('password')}</label>
+            <label htmlFor="password" className="block text-sm font-medium mb-1.5">{t('password')}</label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
