@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { UsageStat } from '@/types';
 
-type Period = 'day' | 'week' | 'month';
+type Period = 'day' | 'week' | 'month' | 'custom';
 
 function periodDays(period: Period): number {
   if (period === 'day') return 1;
@@ -28,8 +28,18 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const childId = searchParams.get('childId');
   const period = (searchParams.get('period') ?? 'week') as Period;
-  const days = periodDays(period);
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  const fromParam = searchParams.get('from');
+  const toParam = searchParams.get('to');
+
+  let since: string;
+  let until: string | undefined;
+  if (period === 'custom' && fromParam && toParam) {
+    since = new Date(fromParam).toISOString();
+    until = new Date(toParam + 'T23:59:59.999Z').toISOString();
+  } else {
+    const days = periodDays(period);
+    since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+  }
 
   if (!childId) return NextResponse.json({ error: 'childId required' }, { status: 400 });
 
@@ -44,12 +54,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { data: conversations } = await supabase
+  let query = supabase
     .from('conversations')
     .select('created_at, message_count')
     .eq('user_id', childId)
     .gte('created_at', since)
     .order('created_at', { ascending: true });
+
+  if (until) query = query.lte('created_at', until);
+
+  const { data: conversations } = await query;
 
   // Group by date (YYYY-MM-DD)
   const byDate = new Map<string, UsageStat>();

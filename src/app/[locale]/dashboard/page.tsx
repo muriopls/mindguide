@@ -42,7 +42,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   );
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-2xl min-w-[800px] mx-auto px-4 py-8">
       <h1 className="text-2xl font-semibold mb-8">{t('title')}</h1>
       <DashboardClient initialChildren={children} />
     </div>

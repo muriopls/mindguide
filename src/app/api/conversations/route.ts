@@ -31,7 +31,17 @@ export async function GET(req: Request) {
     .limit(100);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ conversations: data ?? [] });
+
+  const conversations = (data ?? []).map((c) => ({
+    id: c.id,
+    title: c.title,
+    provider: c.provider,
+    locale: c.locale,
+    createdAt: c.created_at,
+    endedAt: c.ended_at,
+    messageCount: c.message_count,
+  }));
+  return NextResponse.json({ conversations });
 }
 
 export async function POST(req: Request) {

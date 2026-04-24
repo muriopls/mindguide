@@ -72,15 +72,15 @@ export async function POST(req: Request) {
 
   const childId = authData.user.id;
 
-  // Insert child profile
+  // The auth trigger already created the profile row — update it with child fields
   const { error: profileError } = await serviceClient
     .from('profiles')
-    .insert({
-      id: childId,
+    .update({
       display_name: body.displayName.trim(),
       account_type: 'child',
       parent_id: user.id,
-    });
+    })
+    .eq('id', childId);
 
   if (profileError) {
     // Rollback: delete the auth user

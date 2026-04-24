@@ -139,3 +139,11 @@ create policy "Parent marks flag reviewed"
   on public.misuse_flags for update
   using (parent_id = auth.uid())
   with check (parent_id = auth.uid());
+
+-- Atomic message counter (avoids race condition from read-then-update)
+create or replace function public.increment_message_count(conv_id uuid)
+returns void language sql security definer as $$
+  update public.conversations
+  set message_count = message_count + 1
+  where id = conv_id;
+$$;

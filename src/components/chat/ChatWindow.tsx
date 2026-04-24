@@ -20,12 +20,12 @@ interface ChatWindowProps {
   provider: AIProvider;
 }
 
-function saveMessage(conversationId: string, role: 'user' | 'assistant', content: string) {
-  fetch(`/api/conversations/${conversationId}/messages`, {
+function saveMessage(conversationId: string, role: 'user' | 'assistant', content: string): Promise<void> {
+  return fetch(`/api/conversations/${conversationId}/messages`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ role, content }),
-  }).catch(() => {});
+  }).then(() => {}).catch(() => {});
 }
 
 export function ChatWindow({ provider }: ChatWindowProps) {
@@ -149,18 +149,16 @@ export function ChatWindow({ provider }: ChatWindowProps) {
         return prev;
       });
 
-      // Persist messages to DB (fire-and-forget, only on success)
+      // Persist messages to DB sequentially (user first, then assistant) to preserve order
+      // Then trigger misuse analysis on the updated conversation
       if (!isError && conversationIdRef.current) {
         const convId = conversationIdRef.current;
-        const assistantContent = streamBufferRef.current
-          .split(SENTINEL)[0]
-          .trimEnd();
-        if (!retryAssistantId) {
-          saveMessage(convId, 'user', content);
-        }
-        if (assistantContent) {
-          saveMessage(convId, 'assistant', assistantContent);
-        }
+        const assistantContent = streamBufferRef.current.split(SENTINEL)[0].trimEnd();
+        void (async () => {
+          if (!retryAssistantId) await saveMessage(convId, 'user', content);
+          if (assistantContent) await saveMessage(convId, 'assistant', assistantContent);
+          fetch(`/api/conversations/${convId}/analyze`, { method: 'POST' }).catch(() => {});
+        })();
       }
     } catch (err) {
       const code: ChatErrorCode =
@@ -182,12 +180,12 @@ export function ChatWindow({ provider }: ChatWindowProps) {
   }, [sendMessage]);
 
   return (
-    <div className="flex flex-col">
-      <div className="rounded-t-2xl overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+      <div className="rounded-t-2xl overflow-hidden shrink-0">
         <ProgressBar active={isLoading} />
       </div>
 
-      <div ref={scrollContainerRef} className="overflow-y-auto min-h-[240px] px-4 pt-6 pb-6 space-y-4">
+      <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto px-4 pt-6 pb-6 space-y-4">
         <div className="flex gap-2.5 max-w-[85%] mr-auto">
           <div className="w-7 h-7 rounded-full shrink-0 mt-0.5 overflow-hidden">
             <Image src="/icon.png" alt="" width={28} height={28} />

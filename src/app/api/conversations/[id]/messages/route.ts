@@ -26,22 +26,8 @@ export async function POST(req: Request, { params }: Params) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Increment message_count (fire-and-forget, non-critical)
-  void supabase
-    .from('conversations')
-    .select('message_count')
-    .eq('id', conversationId)
-    .eq('user_id', user.id)
-    .single()
-    .then(({ data: conv }) => {
-      if (conv) {
-        void supabase
-          .from('conversations')
-          .update({ message_count: conv.message_count + 1 })
-          .eq('id', conversationId)
-          .eq('user_id', user.id);
-      }
-    });
+  // Increment message_count atomically via RPC (fire-and-forget, non-critical)
+  void supabase.rpc('increment_message_count', { conv_id: conversationId }).then(() => {});
 
   return NextResponse.json({ id: data.id });
 }
