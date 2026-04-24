@@ -57,11 +57,11 @@ export async function POST(req: Request) {
     });
   }
 
+  let result;
   try {
     const model = getModel(resolvedProvider, userKey);
     const system = systemPrompts[resolvedLocale];
-    const result = streamText({ model, system, messages: nonEmptyMessages });
-    return result.toTextStreamResponse();
+    result = streamText({ model, system, messages: nonEmptyMessages });
   } catch (err) {
     const code = getErrorCode(err);
     return new Response(JSON.stringify({ code }), {
@@ -69,4 +69,21 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const chunk of result.textStream) {
+          controller.enqueue(encoder.encode(chunk));
+        }
+      } catch (err) {
+        const code = getErrorCode(err);
+        controller.enqueue(encoder.encode(`\x00${code}`));
+      }
+      controller.close();
+    },
+  });
+
+  return new Response(stream, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 }

@@ -73,6 +73,24 @@ export function ChatWindow({ provider }: ChatWindowProps) {
           prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + chunk } : m)),
         );
       }
+
+      // Check for sentinel error token or empty response
+      setMessages((prev) => {
+        const msg = prev.find((m) => m.id === assistantId);
+        if (!msg) return prev;
+        if (msg.content.startsWith('\x00')) {
+          const errorCode = (msg.content.slice(1) as ChatErrorCode) || 'generic';
+          return prev.map((m) =>
+            m.id === assistantId ? { ...m, content: '', error: true, errorCode } : m,
+          );
+        }
+        if (msg.content === '') {
+          return prev.map((m) =>
+            m.id === assistantId ? { ...m, content: '', error: true, errorCode: 'generic' } : m,
+          );
+        }
+        return prev;
+      });
     } catch (err) {
       const code: ChatErrorCode =
         err !== null && typeof err === 'object' && 'code' in err
