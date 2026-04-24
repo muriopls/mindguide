@@ -5,14 +5,22 @@ import { createClient } from '@/lib/supabase/server';
 import { decryptApiKey } from '@/lib/crypto/keys';
 import type { AIProvider } from '@/types';
 
-type ErrorCode = 'no_key' | 'auth' | 'rate_limit' | 'network' | 'generic';
+type ErrorCode = 'no_key' | 'auth' | 'rate_limit' | 'server_error' | 'network' | 'generic';
 
 function getErrorCode(err: unknown): ErrorCode {
+  const status = (err as { statusCode?: number; status?: number }).statusCode
+    ?? (err as { statusCode?: number; status?: number }).status;
   const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
-  if (msg.includes('api key') || msg.includes('api_key') || msg.includes('no api')) return 'no_key';
-  if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('invalid_api_key')) return 'auth';
+
+  if (status === 401) return 'auth';
+  if (status === 429) return 'rate_limit';
+  if (status !== undefined && status >= 500) return 'server_error';
+
+  if (msg.includes('api key') || msg.includes('api_key') || msg.includes('api-key') || msg.includes('no api')) return 'no_key';
+  if (msg.includes('401') || msg.includes('unauthorized') || msg.includes('authentication')) return 'auth';
   if (msg.includes('429') || msg.includes('rate limit') || msg.includes('rate_limit')) return 'rate_limit';
-  if (msg.includes('fetch') || msg.includes('network') || msg.includes('econnrefused')) return 'network';
+  if (msg.includes('500') || msg.includes('502') || msg.includes('503') || msg.includes('overloaded')) return 'server_error';
+  if (msg.includes('fetch') || msg.includes('network') || msg.includes('econnrefused') || msg.includes('timeout')) return 'network';
   return 'generic';
 }
 

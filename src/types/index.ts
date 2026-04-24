@@ -6,7 +6,7 @@ export interface SnackbarMessage {
   variant: SnackbarVariant;
 }
 
-export type ChatErrorCode = 'no_key' | 'auth' | 'rate_limit' | 'network' | 'generic';
+export type ChatErrorCode = 'no_key' | 'auth' | 'rate_limit' | 'server_error' | 'network' | 'generic';
 
 export interface ChatMessage {
   id: string;

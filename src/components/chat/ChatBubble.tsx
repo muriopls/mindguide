@@ -25,6 +25,7 @@ export function ChatBubble({ message, onRetry }: ChatBubbleProps) {
     no_key: t('errorNoKey'),
     auth: t('errorAuth'),
     rate_limit: t('errorRateLimit'),
+    server_error: t('errorServerError'),
     network: t('errorNetwork'),
     generic: t('errorGeneric'),
   };

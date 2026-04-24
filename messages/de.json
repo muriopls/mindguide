@@ -62,11 +62,12 @@
     "providerLabel": "Modell",
     "providerClaude": "Claude",
     "providerOpenAI": "OpenAI",
-    "errorNoKey": "Kein API-Schlüssel konfiguriert. Bitte wende dich an deinen Lehrer.",
-    "errorAuth": "Der API-Schlüssel ist ungültig. Bitte wende dich an deinen Lehrer.",
-    "errorRateLimit": "Gerade sind zu viele Anfragen unterwegs — warte kurz und versuch es nochmal.",
-    "errorNetwork": "Keine Verbindung zum Server. Bitte überprüfe deine Internetverbindung.",
-    "errorGeneric": "Ups, das hat leider nicht geklappt. Versuch es einfach nochmal!",
+    "errorNoKey": "Ich wurde noch nicht richtig eingerichtet 🔧 — bitte sag deinem Lehrer Bescheid.",
+    "errorAuth": "Mein Zugang funktioniert gerade nicht 🔑 — dein Lehrer muss den API-Schlüssel überprüfen.",
+    "errorRateLimit": "Gerade bin ich ganz schön beschäftigt! ⏳ Warte kurz und frag mich dann nochmal.",
+    "errorServerError": "Bei mir läuft gerade etwas schief 🤕 — versuch es in ein paar Minuten nochmal.",
+    "errorNetwork": "Ich kann gerade nicht erreicht werden 📡 — schau mal, ob dein Internet funktioniert.",
+    "errorGeneric": "Ups, das hat leider nicht geklappt 😅 — versuch es einfach nochmal!",
     "retry": "Nochmal versuchen"
   },
   "hero": {

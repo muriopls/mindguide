@@ -62,11 +62,12 @@
     "providerLabel": "Model",
     "providerClaude": "Claude",
     "providerOpenAI": "OpenAI",
-    "errorNoKey": "No API key configured. Please contact your teacher.",
-    "errorAuth": "The API key is invalid. Please contact your teacher.",
-    "errorRateLimit": "Too many requests right now — wait a moment and try again.",
-    "errorNetwork": "Can't reach the server. Please check your internet connection.",
-    "errorGeneric": "Oops, something went wrong. Just try again!",
+    "errorNoKey": "I haven't been set up yet 🔧 — please let your teacher know.",
+    "errorAuth": "My access isn't working right now 🔑 — your teacher needs to check the API key.",
+    "errorRateLimit": "I'm quite busy right now! ⏳ Wait a moment and ask me again.",
+    "errorServerError": "Something's gone wrong on my end 🤕 — try again in a few minutes.",
+    "errorNetwork": "I can't be reached right now 📡 — check if your internet is working.",
+    "errorGeneric": "Oops, that didn't work 😅 — just try again!",
     "retry": "Try again"
   },
   "hero": {
