@@ -60,33 +60,28 @@ ${transcript}`;
     const { text } = await generateText({ model, prompt, maxOutputTokens: 200 });
     // Strip markdown code fences if Claude wraps the JSON
     const cleaned = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-    console.log('[analyze] raw response:', cleaned);
     const raw = JSON.parse(cleaned) as unknown;
     if (
       typeof raw !== 'object' || raw === null ||
       typeof (raw as Record<string, unknown>).flagged !== 'boolean' ||
       !isValidSeverity((raw as Record<string, unknown>).severity)
     ) {
-      console.log('[analyze] invalid shape:', raw);
       return;
     }
     parsed = raw as AnalysisResult;
-  } catch (e) {
-    console.error('[analyze] parse error:', e);
+  } catch {
     return;
   }
 
-  console.log('[analyze] result:', parsed);
   if (!parsed.flagged) return;
 
   // Fetch the child's parent_id (needed for the flag record)
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from('profiles')
     .select('parent_id, account_type')
     .eq('id', userId)
     .single();
 
-  console.log('[analyze] profile:', profile, profileError);
   if (!profile?.parent_id) return;
 
   const serviceClient = createServiceClient();
@@ -125,7 +120,7 @@ export async function POST(_req: Request, { params }: Params) {
   }
 
   // Return immediately; analysis runs asynchronously within this execution
-  runAnalysis(supabase, id, user.id).catch((e: unknown) => console.error('[analyze] runAnalysis failed:', e));
+  runAnalysis(supabase, id, user.id).catch(() => {});
 
   return NextResponse.json({ queued: true }, { status: 202 });
 }

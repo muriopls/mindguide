@@ -84,31 +84,45 @@ function AddChildForm({ onAdd, isBusy }: AddChildFormProps) {
     setName(''); setEmail(''); setPassword('');
   };
 
+  const inputClass = "w-full px-3 py-2 rounded-xl border border-border/60 bg-background/60 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-mg-primary/40 transition-shadow";
+
   return (
     <form onSubmit={handleSubmit} className="rounded-2xl border border-border/60 bg-background/60 p-4 space-y-3">
       <p className="text-sm font-medium">{t('addChild')}</p>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder={t('childNamePlaceholder')}
-        className="w-full px-3 py-2 rounded-xl border border-border/60 bg-background/60 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-mg-primary/40 transition-shadow"
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder={t('childEmailPlaceholder')}
-        className="w-full px-3 py-2 rounded-xl border border-border/60 bg-background/60 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-mg-primary/40 transition-shadow"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder={t('childPasswordPlaceholder')}
-        minLength={8}
-        className="w-full px-3 py-2 rounded-xl border border-border/60 bg-background/60 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-mg-primary/40 transition-shadow"
-      />
+      <div className="space-y-1">
+        <label htmlFor="child-name" className="text-xs text-muted-foreground">{t('childName')}</label>
+        <input
+          id="child-name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t('childNamePlaceholder')}
+          className={inputClass}
+        />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="child-email" className="text-xs text-muted-foreground">{t('childEmail')}</label>
+        <input
+          id="child-email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t('childEmailPlaceholder')}
+          className={inputClass}
+        />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="child-password" className="text-xs text-muted-foreground">{t('childPassword')}</label>
+        <input
+          id="child-password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder={t('childPasswordPlaceholder')}
+          minLength={8}
+          className={inputClass}
+        />
+      </div>
       <Button
         type="submit"
         size="sm"

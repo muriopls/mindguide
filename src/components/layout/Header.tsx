@@ -1,16 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { LayoutDashboard } from 'lucide-react';
-import { getLocale } from 'next-intl/server';
+import { LayoutDashboard, FlaskConical } from 'lucide-react';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
-import { ThemeSwitcher } from './ThemeSwitcher';
-import { LocaleSwitcher } from './LocaleSwitcher';
-import { UserMenu } from './UserMenu';
+import { DesktopUserMenu } from './DesktopUserMenu';
+import { MobileMenu } from './MobileMenu';
 
 export async function Header() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const locale = await getLocale();
+  const tNav = await getTranslations('nav');
 
   let displayName = '';
   let isParent = false;
@@ -54,21 +54,42 @@ export async function Header() {
           </span>
         </a>
         <nav className="flex items-center gap-1">
-          {isParent && (
-            <Link
-              href={`/${locale}/dashboard`}
-              className="relative p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
-              aria-label="Dashboard"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              {unreviewedFlagCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-mg-error" />
-              )}
-            </Link>
+          {/* Desktop nav */}
+          <span className="hidden md:contents">
+            {isParent && (
+              <>
+                <Link
+                  href={`/${locale}/dashboard`}
+                  className="relative p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+                  aria-label={tNav('dashboard')}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  {unreviewedFlagCount > 0 && (
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-mg-error" />
+                  )}
+                </Link>
+                <Link
+                  href={`/${locale}/test`}
+                  className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+                  aria-label={tNav('test')}
+                >
+                  <FlaskConical className="w-4 h-4" />
+                </Link>
+              </>
+            )}
+            {user && <DesktopUserMenu displayName={displayName} />}
+          </span>
+
+          {/* Mobile burger */}
+          {user && (
+            <span className="md:hidden">
+              <MobileMenu
+                displayName={displayName}
+                isParent={isParent}
+                unreviewedFlagCount={unreviewedFlagCount}
+              />
+            </span>
           )}
-          <LocaleSwitcher />
-          <ThemeSwitcher />
-          {user && <UserMenu displayName={displayName} />}
         </nav>
       </div>
     </header>

@@ -12,6 +12,7 @@
   "nav": {
     "home": "Start",
     "dashboard": "Übersicht",
+    "test": "KI testen",
     "settings": "Einstellungen",
     "login": "Anmelden",
     "logout": "Abmelden"
@@ -84,7 +85,13 @@
     "errorServerError": "Bei mir läuft gerade etwas schief 🤕 — versuch es in ein paar Minuten nochmal.",
     "errorNetwork": "Ich kann gerade nicht erreicht werden 📡 — schau mal, ob dein Internet funktioniert.",
     "errorGeneric": "Ups, das hat leider nicht geklappt 😅 — versuch es einfach nochmal!",
-    "retry": "Nochmal versuchen"
+    "retry": "Nochmal versuchen",
+    "historyButton": "Frühere Gespräche",
+    "historyTitle": "Meine Gespräche",
+    "historyClose": "Schließen",
+    "historyEmpty": "Noch keine früheren Gespräche.",
+    "historyConversationAt": "Gespräch vom",
+    "historyMessages": "Nachrichten"
   },
   "dashboard": {
     "title": "Eltern-Dashboard",

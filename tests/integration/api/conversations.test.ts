@@ -30,6 +30,7 @@ function makeSupabase(
   return {
     auth: { getUser: vi.fn().mockResolvedValue({ data: { user } }) },
     from: vi.fn(() => makeBuilder(results[call++] ?? results[results.length - 1])),
+    rpc: vi.fn().mockReturnValue({ then: vi.fn() }),
   };
 }
 

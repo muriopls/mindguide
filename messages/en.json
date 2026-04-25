@@ -12,6 +12,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "test": "Test AI",
     "settings": "Settings",
     "login": "Sign in",
     "logout": "Sign out"
@@ -84,7 +85,13 @@
     "errorServerError": "Something's gone wrong on my end 🤕 — try again in a few minutes.",
     "errorNetwork": "I can't be reached right now 📡 — check if your internet is working.",
     "errorGeneric": "Oops, that didn't work 😅 — just try again!",
-    "retry": "Try again"
+    "retry": "Try again",
+    "historyButton": "Past conversations",
+    "historyTitle": "My conversations",
+    "historyClose": "Close",
+    "historyEmpty": "No past conversations yet.",
+    "historyConversationAt": "Conversation on",
+    "historyMessages": "messages"
   },
   "dashboard": {
     "title": "Parent Dashboard",

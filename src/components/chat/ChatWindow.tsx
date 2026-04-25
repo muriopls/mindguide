@@ -18,6 +18,7 @@ interface Message {
 
 interface ChatWindowProps {
   provider: AIProvider;
+  persist?: boolean;
 }
 
 function saveMessage(conversationId: string, role: 'user' | 'assistant', content: string): Promise<void> {
@@ -28,7 +29,7 @@ function saveMessage(conversationId: string, role: 'user' | 'assistant', content
   }).then(() => {}).catch(() => {});
 }
 
-export function ChatWindow({ provider }: ChatWindowProps) {
+export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
   const t = useTranslations('chat');
   const locale = useLocale();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -49,27 +50,27 @@ export function ChatWindow({ provider }: ChatWindowProps) {
   }, [messages, isLoading]);
 
   const startNewConversation = useCallback(async () => {
-    const currentId = conversationIdRef.current;
-    if (currentId && messages.some((m) => m.role === 'user')) {
-      // End the current conversation
-      const title = firstUserMessageRef.current?.slice(0, 80) ?? null;
-      fetch(`/api/conversations/${currentId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ended_at: new Date().toISOString(), title }),
-      })
-        .then(() => {
-          // Trigger misuse analysis (fire-and-forget)
-          fetch(`/api/conversations/${currentId}/analyze`, { method: 'POST' }).catch(() => {});
+    if (persist) {
+      const currentId = conversationIdRef.current;
+      if (currentId && messages.some((m) => m.role === 'user')) {
+        const title = firstUserMessageRef.current?.slice(0, 80) ?? null;
+        fetch(`/api/conversations/${currentId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ended_at: new Date().toISOString(), title }),
         })
-        .catch(() => {});
+          .then(() => {
+            fetch(`/api/conversations/${currentId}/analyze`, { method: 'POST' }).catch(() => {});
+          })
+          .catch(() => {});
+      }
     }
 
     conversationIdRef.current = null;
     streamBufferRef.current = '';
     firstUserMessageRef.current = null;
     setMessages([]);
-  }, [messages]);
+  }, [messages, persist]);
 
   const sendMessage = useCallback(async (content: string, retryAssistantId?: string) => {
     const userMsg: Message = { id: crypto.randomUUID(), role: 'user', content };
@@ -85,8 +86,8 @@ export function ChatWindow({ provider }: ChatWindowProps) {
     streamBufferRef.current = '';
 
     try {
-      // Create conversation record on first message
-      if (!conversationIdRef.current) {
+      // Create conversation record on first message (only when persisting)
+      if (persist && !conversationIdRef.current) {
         const res = await fetch('/api/conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -149,9 +150,7 @@ export function ChatWindow({ provider }: ChatWindowProps) {
         return prev;
       });
 
-      // Persist messages to DB sequentially (user first, then assistant) to preserve order
-      // Then trigger misuse analysis on the updated conversation
-      if (!isError && conversationIdRef.current) {
+      if (persist && !isError && conversationIdRef.current) {
         const convId = conversationIdRef.current;
         const assistantContent = streamBufferRef.current.split(SENTINEL)[0].trimEnd();
         void (async () => {
