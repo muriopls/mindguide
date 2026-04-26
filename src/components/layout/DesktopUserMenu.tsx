@@ -8,9 +8,10 @@ import { createClient } from '@/lib/supabase/client';
 
 interface DesktopUserMenuProps {
   displayName: string;
+  isChild?: boolean;
 }
 
-export function DesktopUserMenu({ displayName }: DesktopUserMenuProps) {
+export function DesktopUserMenu({ displayName, isChild = false }: DesktopUserMenuProps) {
   const tNav = useTranslations('nav');
   const tCommon = useTranslations('common');
   const locale = useLocale();
@@ -75,13 +76,15 @@ export function DesktopUserMenu({ displayName }: DesktopUserMenuProps) {
           {isDark ? tCommon('lightMode') : tCommon('darkMode')}
         </button>
 
-        <a
-          href={`/${localeParam}/settings`}
-          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
-        >
-          <Settings className="w-4 h-4 shrink-0" />
-          {tNav('settings')}
-        </a>
+        {!isChild && (
+          <a
+            href={`/${localeParam}/settings`}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+          >
+            <Settings className="w-4 h-4 shrink-0" />
+            {tNav('settings')}
+          </a>
+        )}
 
         <button
           onClick={handleLogout}

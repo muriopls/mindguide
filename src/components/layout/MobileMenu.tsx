@@ -12,10 +12,11 @@ import type { ConversationSummary } from '@/types';
 interface MobileMenuProps {
   displayName: string;
   isParent: boolean;
+  isChild: boolean;
   unreviewedFlagCount: number;
 }
 
-export function MobileMenu({ displayName, isParent, unreviewedFlagCount }: MobileMenuProps) {
+export function MobileMenu({ displayName, isParent, isChild, unreviewedFlagCount }: MobileMenuProps) {
   const tNav = useTranslations('nav');
   const tChat = useTranslations('chat');
   const tCommon = useTranslations('common');
@@ -183,13 +184,15 @@ export function MobileMenu({ displayName, isParent, unreviewedFlagCount }: Mobil
             {isDark ? tCommon('lightMode') : tCommon('darkMode')}
           </button>
 
-          <a
-            href={`/${locale}/settings`}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
-          >
-            <Settings className="w-4 h-4 shrink-0" />
-            {tNav('settings')}
-          </a>
+          {!isChild && (
+            <a
+              href={`/${locale}/settings`}
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+            >
+              <Settings className="w-4 h-4 shrink-0" />
+              {tNav('settings')}
+            </a>
+          )}
 
           <button
             onClick={handleLogout}

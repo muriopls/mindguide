@@ -14,6 +14,7 @@ export async function Header() {
 
   let displayName = '';
   let isParent = false;
+  let isChild = false;
   let unreviewedFlagCount = 0;
 
   if (user) {
@@ -30,6 +31,7 @@ export async function Header() {
       '';
 
     isParent = profile?.account_type === 'parent';
+    isChild = profile?.account_type === 'child';
 
     if (isParent) {
       const { count } = await supabase
@@ -77,7 +79,7 @@ export async function Header() {
                 </Link>
               </>
             )}
-            {user && <DesktopUserMenu displayName={displayName} />}
+            {user && <DesktopUserMenu displayName={displayName} isChild={isChild} />}
           </span>
 
           {/* Mobile burger */}
@@ -86,6 +88,7 @@ export async function Header() {
               <MobileMenu
                 displayName={displayName}
                 isParent={isParent}
+                isChild={isChild}
                 unreviewedFlagCount={unreviewedFlagCount}
               />
             </span>
