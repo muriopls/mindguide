@@ -16,9 +16,13 @@ export default async function HomePage() {
       .eq('id', user.id)
       .single();
 
+    const locale = await getLocale();
     if (profile?.account_type === 'parent') {
-      const locale = await getLocale();
       redirect(`/${locale}/dashboard`);
+    }
+    // Students (child or standalone) go to subjects overview
+    if (profile?.account_type === 'child' || profile?.account_type === 'standalone') {
+      redirect(`/${locale}/subjects`);
     }
   }
 

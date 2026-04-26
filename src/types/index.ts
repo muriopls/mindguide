@@ -38,6 +38,13 @@ export interface ConversationSummary {
   createdAt: string;
   endedAt: string | null;
   messageCount: number;
+  subjectSlug: string | null;
+}
+
+export interface StudentSubject {
+  slug: string;
+  conversationCount: number;
+  lastActiveAt: string | null;
 }
 
 export interface SavedMessage {

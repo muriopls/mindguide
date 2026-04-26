@@ -19,6 +19,7 @@ interface Message {
 interface ChatWindowProps {
   provider: AIProvider;
   persist?: boolean;
+  subject?: string;
 }
 
 function saveMessage(conversationId: string, role: 'user' | 'assistant', content: string): Promise<void> {
@@ -29,7 +30,7 @@ function saveMessage(conversationId: string, role: 'user' | 'assistant', content
   }).then(() => {}).catch(() => {});
 }
 
-export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
+export function ChatWindow({ provider, persist = true, subject }: ChatWindowProps) {
   const t = useTranslations('chat');
   const locale = useLocale();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -131,7 +132,7 @@ export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
         const res = await fetch('/api/conversations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ provider, locale }),
+          body: JSON.stringify({ provider, locale, ...(subject ? { subjectSlug: subject } : {}) }),
         });
         if (res.ok) {
           const body = await res.json() as { id: string };

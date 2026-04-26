@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { AIProvider, Locale } from '@/types';
+import { isValidSubjectSlug } from '@/lib/subjects';
 
 export async function GET(req: Request) {
   const supabase = await createClient();
@@ -9,6 +10,7 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const childId = searchParams.get('childId');
+  const subject = searchParams.get('subject');
 
   // If childId provided, verify caller is the parent
   if (childId) {
@@ -23,13 +25,18 @@ export async function GET(req: Request) {
   }
 
   const targetUserId = childId ?? user.id;
-  const { data, error } = await supabase
+  let query = supabase
     .from('conversations')
-    .select('id, title, provider, locale, created_at, ended_at, message_count')
+    .select('id, title, provider, locale, created_at, ended_at, message_count, subject_slug')
     .eq('user_id', targetUserId)
     .order('created_at', { ascending: false })
     .limit(100);
 
+  if (subject && isValidSubjectSlug(subject)) {
+    query = query.eq('subject_slug', subject);
+  }
+
+  const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const conversations = (data ?? []).map((c) => ({
@@ -40,6 +47,7 @@ export async function GET(req: Request) {
     createdAt: c.created_at,
     endedAt: c.ended_at,
     messageCount: c.message_count,
+    subjectSlug: c.subject_slug ?? null,
   }));
   return NextResponse.json({ conversations });
 }
@@ -49,13 +57,16 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const body = await req.json() as { provider?: unknown; locale?: unknown };
+  const body = await req.json() as { provider?: unknown; locale?: unknown; subjectSlug?: unknown };
   const provider = (body.provider === 'openai' ? 'openai' : 'claude') as AIProvider;
   const locale = (body.locale === 'en' ? 'en' : 'de') as Locale;
+  const subjectSlug = typeof body.subjectSlug === 'string' && isValidSubjectSlug(body.subjectSlug)
+    ? body.subjectSlug
+    : null;
 
   const { data, error } = await supabase
     .from('conversations')
-    .insert({ user_id: user.id, provider, locale })
+    .insert({ user_id: user.id, provider, locale, subject_slug: subjectSlug })
     .select('id')
     .single();
 

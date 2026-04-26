@@ -10,19 +10,26 @@ function dispatchLoadConversation(id: string) {
   window.dispatchEvent(new CustomEvent('mindguide:load-conversation', { detail: { id } }));
 }
 
-export function ConversationSidebar() {
+interface ConversationSidebarProps {
+  subject?: string;
+}
+
+export function ConversationSidebar({ subject }: ConversationSidebarProps = {}) {
   const t = useTranslations('chat');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
 
   useEffect(() => {
-    fetch('/api/conversations')
+    const url = subject
+      ? `/api/conversations?subject=${encodeURIComponent(subject)}`
+      : '/api/conversations';
+    fetch(url)
       .then((r) => r.json() as Promise<{ conversations: ConversationSummary[] }>)
       .then(({ conversations: convs }) => setConversations(convs ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [subject]);
 
   const list = (
     <div className="flex flex-col h-full">

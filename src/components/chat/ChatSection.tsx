@@ -7,9 +7,10 @@ import type { AIProvider } from '@/types';
 
 interface ChatSectionProps {
   persist?: boolean;
+  subject?: string;
 }
 
-export function ChatSection({ persist = true }: ChatSectionProps) {
+export function ChatSection({ persist = true, subject }: ChatSectionProps) {
   const [provider, setProvider] = useState<AIProvider>('claude');
 
   return (
@@ -18,7 +19,7 @@ export function ChatSection({ persist = true }: ChatSectionProps) {
         className="flex flex-col rounded-2xl border border-white/60 dark:border-white/8 bg-white/35 dark:bg-white/[0.04] backdrop-blur-sm shadow-lg shadow-black/5 dark:shadow-black/25"
         style={{ maxHeight: 'calc(100dvh - 9rem)' }}
       >
-        <ChatWindow provider={provider} persist={persist} />
+        <ChatWindow provider={provider} persist={persist} subject={subject} />
       </div>
       <div className="px-1">
         <ModelSelector provider={provider} onChange={setProvider} />

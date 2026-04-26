@@ -51,6 +51,7 @@ export function FlagRow({ flag, onMarkReviewed }: FlagRowProps) {
     createdAt: flag.createdAt,
     endedAt: null,
     messageCount: 0,
+    subjectSlug: null,
   };
 
   return (
