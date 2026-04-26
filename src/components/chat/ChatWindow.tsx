@@ -41,6 +41,8 @@ export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
   const streamBufferRef = useRef<string>('');
   // Track first user message for conversation title
   const firstUserMessageRef = useRef<string | null>(null);
+  // True when conversation was loaded from history (already has ended_at set)
+  const isResumedRef = useRef(false);
 
   const welcomeContent = t('welcomeMessage');
 
@@ -49,8 +51,42 @@ export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, isLoading]);
 
+  // Load a past conversation into the chat window (triggered by custom event from sidebar/mobile menu)
+  const loadConversation = useCallback(async (id: string) => {
+    if (!persist) return;
+    conversationIdRef.current = id;
+    firstUserMessageRef.current = null;
+    streamBufferRef.current = '';
+    isResumedRef.current = true;
+    setMessages([]);
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/conversations/${id}`);
+      if (!res.ok) return;
+      const body = await res.json() as {
+        messages: { id: string; role: 'user' | 'assistant'; content: string }[];
+      };
+      setMessages(body.messages.map((m) => ({ id: m.id, role: m.role, content: m.content })));
+      firstUserMessageRef.current =
+        body.messages.find((m) => m.role === 'user')?.content ?? null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [persist]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const { id } = (e as CustomEvent<{ id: string }>).detail;
+      void loadConversation(id);
+    };
+    window.addEventListener('mindguide:load-conversation', handler);
+    return () => window.removeEventListener('mindguide:load-conversation', handler);
+  }, [loadConversation]);
+
   const startNewConversation = useCallback(async () => {
-    if (persist) {
+    // Only PATCH/analyze conversations that were started fresh in this session
+    // (not ones loaded from history that haven't been extended with new messages)
+    if (persist && !isResumedRef.current) {
       const currentId = conversationIdRef.current;
       if (currentId && messages.some((m) => m.role === 'user')) {
         const title = firstUserMessageRef.current?.slice(0, 80) ?? null;
@@ -69,6 +105,7 @@ export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
     conversationIdRef.current = null;
     streamBufferRef.current = '';
     firstUserMessageRef.current = null;
+    isResumedRef.current = false;
     setMessages([]);
   }, [messages, persist]);
 
@@ -86,6 +123,9 @@ export function ChatWindow({ provider, persist = true }: ChatWindowProps) {
     streamBufferRef.current = '';
 
     try {
+      // Mark as extended once the user sends a new message into a resumed conversation
+      if (isResumedRef.current && !retryAssistantId) isResumedRef.current = false;
+
       // Create conversation record on first message (only when persisting)
       if (persist && !conversationIdRef.current) {
         const res = await fetch('/api/conversations', {

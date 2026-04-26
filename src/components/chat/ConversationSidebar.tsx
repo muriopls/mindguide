@@ -4,15 +4,17 @@ import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { ConversationViewer } from '@/components/dashboard/ConversationViewer';
 import type { ConversationSummary } from '@/types';
+
+function dispatchLoadConversation(id: string) {
+  window.dispatchEvent(new CustomEvent('mindguide:load-conversation', { detail: { id } }));
+}
 
 export function ConversationSidebar() {
   const t = useTranslations('chat');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
-  const [selected, setSelected] = useState<ConversationSummary | null>(null);
 
   useEffect(() => {
     fetch('/api/conversations')
@@ -50,7 +52,7 @@ export function ConversationSidebar() {
           conversations.map((conv) => (
             <button
               key={conv.id}
-              onClick={() => { setSelected(conv); setMobileOpen(false); }}
+              onClick={() => { dispatchLoadConversation(conv.id); setMobileOpen(false); }}
               className="w-full text-left px-4 py-2.5 hover:bg-foreground/5 transition-colors group"
             >
               <p className="text-xs font-medium truncate text-foreground/80 group-hover:text-foreground transition-colors">
@@ -88,12 +90,6 @@ export function ConversationSidebar() {
         {list}
       </aside>
 
-      {selected && (
-        <ConversationViewer
-          conversation={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </>
   );
 }

@@ -34,8 +34,10 @@ export function AuthForm({ mode }: AuthFormProps) {
         const { error: err } = await supabase.auth.signInWithPassword({ email, password });
         if (err) {
           setError(err.message.includes('Invalid') ? t('errorInvalidCredentials') : t('errorGeneric'));
+          setIsLoading(false);
           return;
         }
+        // Keep spinner active during navigation — component unmounts on arrival
         router.push(`/${locale}`);
         router.refresh();
       } else {
@@ -46,12 +48,14 @@ export function AuthForm({ mode }: AuthFormProps) {
         });
         if (err) {
           setError(err.message.includes('already') ? t('errorEmailTaken') : t('errorGeneric'));
+          setIsLoading(false);
           return;
         }
         router.push(`/${locale}`);
         router.refresh();
       }
-    } finally {
+    } catch {
+      setError(t('errorGeneric'));
       setIsLoading(false);
     }
   };

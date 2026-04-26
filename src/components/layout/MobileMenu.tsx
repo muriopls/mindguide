@@ -7,7 +7,6 @@ import { Menu, X, Settings, LogOut, Moon, Sun, LayoutDashboard, MessageSquare, F
 import { useTheme } from '@/components/providers/ThemeProvider';
 import { createClient } from '@/lib/supabase/client';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { ConversationViewer } from '@/components/dashboard/ConversationViewer';
 import type { ConversationSummary } from '@/types';
 
 interface MobileMenuProps {
@@ -29,7 +28,6 @@ export function MobileMenu({ displayName, isParent, unreviewedFlagCount }: Mobil
   const [open, setOpen] = useState(false);
   const [loadingConvs, setLoadingConvs] = useState(false);
   const [conversations, setConversations] = useState<ConversationSummary[] | null>(null);
-  const [selected, setSelected] = useState<ConversationSummary | null>(null);
 
   const handleOpen = async () => {
     setOpen(true);
@@ -44,7 +42,7 @@ export function MobileMenu({ displayName, isParent, unreviewedFlagCount }: Mobil
     }
   };
 
-  const handleClose = () => { setOpen(false); setSelected(null); };
+  const handleClose = () => setOpen(false);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -114,7 +112,10 @@ export function MobileMenu({ displayName, isParent, unreviewedFlagCount }: Mobil
               conversations.map((conv) => (
                 <button
                   key={conv.id}
-                  onClick={() => { setSelected(conv); setOpen(false); }}
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent('mindguide:load-conversation', { detail: { id: conv.id } }));
+                    setOpen(false);
+                  }}
                   className="w-full text-left px-4 py-2.5 hover:bg-foreground/5 transition-colors"
                 >
                   <p className="text-xs font-medium truncate text-foreground/80">
@@ -200,13 +201,6 @@ export function MobileMenu({ displayName, isParent, unreviewedFlagCount }: Mobil
         </div>
       </div>
 
-      {/* Conversation viewer */}
-      {selected && (
-        <ConversationViewer
-          conversation={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </>
   );
 }

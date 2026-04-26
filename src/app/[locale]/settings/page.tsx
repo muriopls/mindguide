@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Pencil, Check, X as XIcon } from 'lucide-react';
 import { useSnackbar } from '@/hooks/useSnackbar';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
@@ -135,6 +136,99 @@ function AddChildForm({ onAdd, isBusy }: AddChildFormProps) {
   );
 }
 
+interface ChildRowProps {
+  child: ChildAccount;
+  onDelete: (id: string) => Promise<void>;
+  onRename: (id: string, name: string) => Promise<void>;
+  isDeleting: boolean;
+}
+
+function ChildRow({ child, onDelete, onRename, isDeleting }: ChildRowProps) {
+  const t = useTranslations('settings');
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(child.displayName ?? '');
+  const [saving, setSaving] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const startEdit = () => {
+    setValue(child.displayName ?? '');
+    setEditing(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const cancelEdit = () => setEditing(false);
+
+  const save = async () => {
+    const trimmed = value.trim();
+    if (!trimmed || trimmed === child.displayName) { setEditing(false); return; }
+    setSaving(true);
+    try {
+      await onRename(child.id, trimmed);
+      setEditing(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 px-4 py-3">
+      <div className="flex-1 min-w-0">
+        {editing ? (
+          <input
+            ref={inputRef}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') void save(); if (e.key === 'Escape') cancelEdit(); }}
+            className="w-full text-sm font-medium bg-transparent border-b border-mg-primary/60 focus:outline-none pb-0.5"
+          />
+        ) : (
+          <p className="text-sm font-medium truncate">{child.displayName ?? child.email}</p>
+        )}
+        <p className="text-xs text-muted-foreground mt-0.5 truncate">{child.email}</p>
+      </div>
+
+      <div className="flex items-center gap-1 shrink-0">
+        {editing ? (
+          <>
+            <button
+              onClick={() => void save()}
+              disabled={saving}
+              className="p-1.5 rounded-lg text-mg-success hover:bg-mg-success/10 transition-colors"
+              aria-label={t('saveChildName')}
+            >
+              {saving ? <LoadingSpinner size="sm" /> : <Check className="w-3.5 h-3.5" />}
+            </button>
+            <button
+              onClick={cancelEdit}
+              className="p-1.5 rounded-lg text-muted-foreground hover:bg-foreground/5 transition-colors"
+              aria-label={t('common.cancel') as string}
+            >
+              <XIcon className="w-3.5 h-3.5" />
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={startEdit}
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+            aria-label={t('editChildName')}
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </button>
+        )}
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={isDeleting || editing}
+          className="rounded-xl text-mg-error border-mg-error/40 hover:bg-mg-error/10"
+          onClick={() => void onDelete(child.id)}
+        >
+          {isDeleting ? <LoadingSpinner size="sm" /> : t('deleteChild')}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const t = useTranslations('settings');
   const { show } = useSnackbar();
@@ -234,6 +328,24 @@ export default function SettingsPage() {
     }
   };
 
+  const handleRenameChild = async (childId: string, displayName: string) => {
+    try {
+      const res = await fetch(`/api/family/children/${childId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ displayName }),
+      });
+      if (!res.ok) throw new Error();
+      setChildren((prev) =>
+        prev.map((c) => (c.id === childId ? { ...c, displayName } : c)),
+      );
+      show(t('childNameSaved'), 'success');
+    } catch {
+      show(t('childNameError'), 'error');
+      throw new Error(); // re-throw so ChildRow resets saving state
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
@@ -289,26 +401,13 @@ export default function SettingsPage() {
           ) : (
             <div className="space-y-2">
               {children.map((child) => (
-                <div
+                <ChildRow
                   key={child.id}
-                  className="flex items-center justify-between rounded-2xl border border-border/60 bg-background/60 px-4 py-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{child.displayName ?? child.email}</p>
-                    <p className="text-xs text-muted-foreground">{child.email}</p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={deletingChildId === child.id}
-                    className="rounded-xl text-mg-error border-mg-error/40 hover:bg-mg-error/10 shrink-0"
-                    onClick={() => handleDeleteChild(child.id)}
-                  >
-                    {deletingChildId === child.id
-                      ? <LoadingSpinner size="sm" />
-                      : t('deleteChild')}
-                  </Button>
-                </div>
+                  child={child}
+                  onDelete={handleDeleteChild}
+                  onRename={handleRenameChild}
+                  isDeleting={deletingChildId === child.id}
+                />
               ))}
             </div>
           )}
